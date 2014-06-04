@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Oink-oss by vija</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Oink-oss</h1>
+        <p>Pig as a RESTful Service</p>
+        <p class="view"><a href="https://github.scm.corp.ebay.com/vija/Oink-OSS">View the Project on GitHub <small>vija/Oink-OSS</small></a></p>
+        <ul>
+          <li class="single"><a href="">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="oink" class="anchor" href="#oink"><span class="octicon octicon-link"></span></a>Oink</h1>
+
+<p>The aim of this project is to provide a REST based interface for PIG execution. Oink is Pig on Servlet which provides the following functionalities:</p>
+
+<ul>
+<li>Register/unregister/view a Pig script</li>
+<li>Register/unregister/view a jar file (for customer defined UDF functions)</li>
+<li>Execute a Pig job</li>
+<li>View the status/stats of a Pig job</li>
+<li>Cancel a Pig job</li>
+</ul><p>For more information on the targetted use-case and REST documentation please refer to our <a href="https://github.scm.corp.ebay.com/vija/Oink-OSS/wiki">wiki</a>.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a name="requisites" class="anchor" href="#requisites"><span class="octicon octicon-link"></span></a>Requisites</h3>
+
+<ul>
+<li>Tomcat with JDK 7</li>
+<li>Maven </li>
+</ul><h3>
+<a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h3>
+
+<p>The following steps need to be followed in order to build the war file of the REST service:</p>
+
+<ul>
+<li>Clone the project on GitHub</li>
+<li>Do a maven build at the top level of the project using <code>mvn clean install</code>
+</li>
+<li>The war file will be generated in service/target/pig.war</li>
+</ul><h3>
+<a name="running-test-cases" class="anchor" href="#running-test-cases"><span class="octicon octicon-link"></span></a>Running test cases</h3>
+
+<ul>
+<li>In order to run test cases use <code>mvn clean test</code>
+</li>
+</ul><h3>
+<a name="deployment" class="anchor" href="#deployment"><span class="octicon octicon-link"></span></a>Deployment</h3>
+
+<ul>
+<li>Shut down the tomcat if it is running using <code>bin/shutdown.sh</code>
+</li>
+<li>Kill the process manually if the tomcat hasn't shutdown gracefully</li>
+<li>Place the pig.war in the webapps directory of the Tomcat instance and remove the exploded directory of pig if it exists</li>
+<li>Startup the tomcat using <code>bin/startup.sh</code>
+</li>
+</ul><h3>
+<a name="default-configuration" class="anchor" href="#default-configuration"><span class="octicon octicon-link"></span></a>Default Configuration</h3>
+
+<p>Default configuration is to use localhost as the Hadoop cluster. Following are configuration parameters available (under service/src/main/resources/default.properties file) which can be changed :</p>
+
+<pre><code>jobtracker=localhost:8021 (Job tracker address)
+jobtracker.ui=http://localhost:50030/jobdetails.jsp?jobid= (Job tracker UI URL used for providing stats information)
+fs.default.name=hdfs://localhost:8020 (Hadoop Namenode address)
+scripts.basepath=hdfs://localhost:8020/tmp/pig/scripts/ (Location in DFS where PIG scripts will be stored)
+jars.basepath=hdfs://localhost:8020/tmp/pig/jars/ (Location in DFS where jar files will be stored)
+requests.basepath=hdfs://localhost:8020/tmp/pig/requests/ (Location where request specific information will be stored)
+max.threads=20 (size of thread pool for running PIG requests in parallel)
+</code></pre>
+
+<p>The core-site.xml and mapred-site.xml files are bundled along with the property files to provide cluster specific parameters like 
+namenode address, jobtracker address in order to enable connecting to remote clusters. If the cluster is a secure cluster 
+and uses authentication mechanisms like Kerberos then parameters like kerberos principal need to be provided in the 
+mapred-site.xml and core-site.xml. Also, the queue to which jobs must be submitted also needs to provided in the 
+mapred-site.xml</p>
+
+<p>Different kinds of property files can be created based on the environment in which the service is going to be hosted. 
+For example a prod.properties file can be created to house the settings for a production instance. To pick up the property
+file the following steps should be followed during startup of the Tomcat instance. The environment variable <code>env</code> should 
+be set as the desired environment as follows:</p>
+
+<pre><code>export env=prod
+</code></pre>
+
+<p>This would make sure that prod.properties is picked up by the ConfigurationLoader at startup.</p>
+
+<h3>
+<a name="project-structure" class="anchor" href="#project-structure"><span class="octicon octicon-link"></span></a>Project Structure</h3>
+
+<p>The directory structure of our project is explained in the <a href="https://github.scm.corp.ebay.com/vija/Oink-OSS/wiki/Project-Structure">Project Structure</a> wiki</p>
+
+<h2>
+<a name="known-issues-and-feature-requests" class="anchor" href="#known-issues-and-feature-requests"><span class="octicon octicon-link"></span></a>Known Issues and Feature Requests</h2>
+
+<p>Please use our <a href="https://github.scm.corp.ebay.com/vija/Oink-OSS/issues">Issues</a> page to view the existing issues, to raise bugs and request for new features.</p>
+
+<h2>
+<a name="contribution-guidelines" class="anchor" href="#contribution-guidelines"><span class="octicon octicon-link"></span></a>Contribution Guidelines</h2>
+
+<p>Eager to contribute? Steps to contribute to our project is available in our <a href="https://github.scm.corp.ebay.com/vija/Oink-OSS/wiki/Contribution-Guidelines">Contribution Guidelines</a> wiki</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.scm.corp.ebay.com/vija">vija</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
