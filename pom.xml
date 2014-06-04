@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<properties>
+		<version>1.0.0</version>
+	</properties>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.pig.oink</groupId>
+	<artifactId>oink</artifactId>
+	<version>${version}</version>
+	<name>PIG</name>
+	<packaging>pom</packaging>
+	<modules>
+		<module>common</module>
+		<module>testutils</module>
+		<module>bean</module>
+		<module>service</module>
+	</modules>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<!-- configuration> <source>1.6</source> <target>1.6</target> </configuration -->
+			</plugin>
+
+                        <plugin>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>findbugs-maven-plugin</artifactId>
+                                <configuration>
+                                        <fork>false</fork>
+                                </configuration>
+                                <version>2.4.0</version>
+                        </plugin>
+		        <plugin>
+                        	<groupId>org.codehaus.mojo</groupId>
+                        	<artifactId>cobertura-maven-plugin</artifactId>
+                        	<version>2.3</version>
+                         	<configuration>
+                                	<formats>
+                                        	<format>html</format>
+                                        	<format>xml</format>
+                                	</formats>
+                          </configuration>
+                        <dependencies>
+                                <dependency>
+                                        <groupId>net.sourceforge.cobertura</groupId>
+                                        <artifactId>cobertura</artifactId>
+                                        <version>1.9.4.1</version>
+                                </dependency>
+                                <dependency>
+                                        <groupId>net.sourceforge.cobertura</groupId>
+                                        <artifactId>cobertura-runtime</artifactId>
+                                        <version>1.9.4.1</version>
+                                        <type>pom</type>
+                                </dependency>
+
+                        </dependencies>
+                </plugin>
+
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.7</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
