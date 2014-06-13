@@ -8,7 +8,7 @@ The aim of this project is to provide a REST based interface for PIG execution. 
 * View the status/stats of a Pig job
 * Cancel a Pig job
 
-For more information on the targetted use-case and REST documentation please refer to our [wiki](https://github.scm.corp.ebay.com/vija/Oink-OSS/wiki).
+For more information on the targetted use-case and REST documentation please refer to our [wiki](https://github.com/eBay/oink/wiki).
 
 ## Usage
 
@@ -61,12 +61,12 @@ export env=prod
 This would make sure that prod.properties is picked up by the ConfigurationLoader at startup.
 
 ### Project Structure
-The directory structure of our project is explained in the [Project Structure](https://github.scm.corp.ebay.com/vija/Oink-OSS/wiki/Project-Structure) wiki
+The directory structure of our project is explained in the [Project Structure](https://github.com/eBay/oink/wiki/Project-Structure) wiki
 
 ## Known Issues and Feature Requests
-Please use our [Issues](https://github.scm.corp.ebay.com/vija/Oink-OSS/issues) page to view the existing issues, to raise bugs and request for new features.
+Please use our [Issues](https://github.com/eBay/oink/issues) page to view the existing issues, to raise bugs and request for new features.
 
 ## Contribution Guidelines
-Eager to contribute? Steps to contribute to our project is available in our [Contribution Guidelines](https://github.scm.corp.ebay.com/vija/Oink-OSS/wiki/Contribution-Guidelines) wiki
+Eager to contribute? Steps to contribute to our project is available in our [Contribution Guidelines](https://github.com/eBay/oink/wiki/Contribution-Guidelines) wiki
 
 
