@@ -19,14 +19,14 @@
     <param-value>/default.properties</param-value>
   </context-param>
   <listener>
-    <listener-class>org.ebayopensource.pig.common.config.ConfigurationLoader</listener-class>
+    <listener-class>org.pig.oink.common.config.ConfigurationLoader</listener-class>
   </listener>
   <servlet>
     <servlet-name>PigSelfService</servlet-name>
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 	<init-param>
 			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>org.ebayopensource.pig.rest;org.codehaus.jackson.jaxrs</param-value>
+			<param-value>org.pig.oink.rest;org.codehaus.jackson.jaxrs</param-value>
 		</init-param>
     <init-param>
       <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
