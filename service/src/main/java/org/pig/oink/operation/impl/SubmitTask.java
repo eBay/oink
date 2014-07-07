@@ -76,7 +76,7 @@ public class SubmitTask implements Runnable {
 		String requestPath= PropertyLoader.getInstance().getProperty(Constants.REQUEST_PATH);
 		String scriptPath= PropertyLoader.getInstance().getProperty(Constants.SCRIPTS_PATH);
 		
-		
+	        String log4jPath= getClass().getResource("/log4j.xml").getPath();	
 		Path inputPath= new Path(requestPath + requestId + "/input");
 		String jsonStr= gson.toJson(params);
 		String encodedParams= new String(Base64.encodeBase64URLSafeString(jsonStr.getBytes()));
@@ -100,6 +100,9 @@ public class SubmitTask implements Runnable {
 		String outputPath= requestPath + requestId + "/output";
 		parameters.add("-p");
 		parameters.add("output=" + outputPath);
+
+		parameters.add("-4");
+		parameters.add(log4jPath);
 		
 		parameters.add("-f");
 		parameters.add(scriptPath + scriptName);
