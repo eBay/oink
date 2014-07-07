@@ -7,7 +7,7 @@
 	<groupId>org.pig.oink</groupId>
 	<artifactId>oink</artifactId>
 	<version>${version}</version>
-	<name>PIG</name>
+	<name>Oink</name>
 	<packaging>pom</packaging>
 	<modules>
 		<module>common</module>

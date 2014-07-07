@@ -4,7 +4,7 @@
 
 
 <web-app>
-    <display-name>Pig Self Service</display-name>
+    <display-name>Oink</display-name>
     
  	<context-param>
 	  <param-name>version</param-name>
@@ -22,7 +22,7 @@
     <listener-class>org.pig.oink.common.config.ConfigurationLoader</listener-class>
   </listener>
   <servlet>
-    <servlet-name>PigSelfService</servlet-name>
+    <servlet-name>Oink</servlet-name>
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 	<init-param>
 			<param-name>com.sun.jersey.config.property.packages</param-name>
@@ -35,7 +35,7 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-    <servlet-name>PigSelfService</servlet-name>
+    <servlet-name>Oink</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>

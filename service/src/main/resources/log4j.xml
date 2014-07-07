@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
-    <appender name="FILE" class="org.apache.log4j.CustomDailyRollingFileAppender">
-        <param name="File" value="./logs/pig_service.log"/>
+    <appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="./logs/oink.log"/>
         <param name="Append" value="true"/>
         <param name="Threshold" value="INFO"/>
         <param name="MaxFileSize" value="50000KB"/>
 	<param name="MaxNumberOfDays" value="30"/>
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d|%5p|PIG_SERVICE|%m%n"/>
+            <param name="ConversionPattern" value="%d|%5p|OINK|%m%n"/>
         </layout>
     </appender>
     <root>

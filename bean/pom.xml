@@ -9,7 +9,7 @@
 	<groupId>org.pig.oink</groupId>
 	<artifactId>bean</artifactId>
 	<version>${version}</version>
-	<name>PIG Bean</name>
+	<name>Oink Bean</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

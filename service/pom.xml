@@ -10,7 +10,7 @@
 	<artifactId>service</artifactId>
 	<version>${version}</version>
 	<packaging>war</packaging>
-	<name>Pig Service</name>
+	<name>Oink Service</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.pig.oink</groupId>
@@ -113,7 +113,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>pig</finalName>
+		<finalName>oink</finalName>
 		<pluginManagement>
 			<plugins>
 				<plugin>
