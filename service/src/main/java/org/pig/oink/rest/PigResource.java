@@ -68,6 +68,10 @@ public class PigResource {
 	public Response registerJar(@PathParam("jarName") String jarName, InputStream uploadedJar) throws IOException {
 		logger.info("Request for registring jar with name " + jarName);
 		try {
+			if (uploadedJar == null || uploadedJar.available() == 0){
+				logger.error("Empty input stream passed");
+				return Response.status(400).entity("Bad request. No jar uploaded!").build();
+			}
 			String pathName= PropertyLoader.getInstance().getProperty(Constants.JARS_PATH) + jarName;
 			PigJobServerImpl.getPigJobServer().registerFile(pathName, uploadedJar);
 			return Response.ok().entity(pathName).build();
@@ -132,7 +136,8 @@ public class PigResource {
 	public Response registerScript(@PathParam("scriptName") String scriptName, InputStream uploadedScript) throws IOException {
 		logger.info("Request for registering script " + scriptName);
 		try{
-			if (uploadedScript == null){
+			if (uploadedScript == null || uploadedScript.available() == 0){
+				logger.error("Empty input stream passed");
 				return Response.status(400).entity("Bad request. No script uploaded!").build();
 			}
 			   
