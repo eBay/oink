@@ -15,7 +15,7 @@
 		<module>bean</module>
 		<module>service</module>
 	</modules>
-	<build>
+	<build> 
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
