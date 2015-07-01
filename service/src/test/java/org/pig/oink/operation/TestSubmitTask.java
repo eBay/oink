@@ -46,7 +46,7 @@ public class TestSubmitTask {
         PropertyLoader.getInstance().setProperty("scripts.basepath", HADOOP_TMP_PATH + "/pig/scripts/");
         PropertyLoader.getInstance().setProperty("jars.basepath",  HADOOP_TMP_PATH + "/pig/jars/");
         PropertyLoader.getInstance().setProperty("requests.basepath",  HADOOP_TMP_PATH + "/pig/requests/");
-    	PropertyLoader.getInstance().setProperty("fs.default.name", "file:///");
+    	PropertyLoader.getInstance().setProperty("fs.defaultFS", "file:///");
         new File(HADOOP_TMP_PATH).mkdirs();
     }
     

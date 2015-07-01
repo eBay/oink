@@ -1,19 +1,26 @@
 <configuration>
-<property>
-  <name>mapred.job.tracker</name>
-  <value>localhost:8021</value>
-  <description>A base for other temporary directories.</description>
-</property>
-  <!--property>
-    <name>mapred.job.map.memory.mb</name>
-    <value>2048</value>
-  </property>
-  <property>
-    <name>mapred.job.reduce.memory.mb</name>
-    <value>4096</value>
-  </property>
-   <property>
-      <name>pig.maxCombinedSplitSize</name>
-      <value>500000000</value>
-   </property-->
+	<property>
+	    <name>mapreduce.framework.name</name>
+	    <value>yarn</value>
+	</property>
+	
+	<property>
+	    <name>mapreduce.output.fileoutputformat.compress</name>
+	    <value>false</value>
+	</property>
+	
+	<property>
+	  <name>mapreduce.jobhistory.address</name>
+	  <value>localhost:10020</value>
+	</property>
+	
+	  <property>
+	  <name>mapreduce.map.memory.mb</name>
+	  <value>1024</value>
+	</property>
+	
+	<property>
+	  <name>mapreduce.reduce.memory.mb</name>
+	  <value>2048</value>
+	</property>
 </configuration>

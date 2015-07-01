@@ -60,9 +60,9 @@ public class TestPigResource {
         PropertyLoader.getInstance().setProperty("scripts.basepath", HADOOP_TMP_PATH + "/pig/scripts/");
         PropertyLoader.getInstance().setProperty("jars.basepath",  HADOOP_TMP_PATH + "/pig/jars/");
         PropertyLoader.getInstance().setProperty("requests.basepath",  HADOOP_TMP_PATH + "/pig/requests/");
-    	PropertyLoader.getInstance().setProperty("fs.default.name", "file:///");
+    	PropertyLoader.getInstance().setProperty("fs.defaultFS", "file:///");
     	conf = new Configuration();
-        conf.set("fs.default.name", "file:///");
+        conf.set("fs.defaultFS", "file:///");
         conf.set("mapred.job.tracker", "local");
         conf.setInt("dfs.replication", 1);
         conf.setInt("io.sort.mb", 10);

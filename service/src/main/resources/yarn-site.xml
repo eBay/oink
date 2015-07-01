@@ -1,0 +1,13 @@
+<configuration>
+
+    <property>
+        <name>yarn.resourcemanager.address</name>
+        <value>localhost:8021</value>
+    </property>
+    
+    <property>
+        <name>yarn.resourcemanager.webapp.address</name>
+        <value>localhost:50030</value>
+    </property>
+    
+</configuration>

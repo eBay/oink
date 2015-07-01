@@ -21,5 +21,5 @@ public class Constants {
 	public static final String JARS_PATH="jars.basepath";
 	public static final String SCRIPTS_PATH= "scripts.basepath";
 	public static final String REQUEST_PATH= "requests.basepath";
-	public static final String DEFAULT_HDFS_NAME= "fs.default.name";
+	public static final String DEFAULT_HDFS_NAME= "fs.defaultFS";
 }

@@ -30,11 +30,11 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.JobClient;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.JobID;
-import org.apache.hadoop.mapred.RunningJob;
 import org.apache.hadoop.util.LineReader;
+import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.hadoop.yarn.client.api.YarnClient;
+import org.apache.hadoop.yarn.conf.YarnConfiguration;
+import org.apache.hadoop.yarn.util.ConverterUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.pig.oink.bean.PigRequestParameters;
@@ -52,7 +52,7 @@ import com.google.gson.GsonBuilder;
 public class PigJobServerImpl implements PigJobServer {
 	private ExecutorService executors = Executors.newFixedThreadPool(Integer.parseInt(PropertyLoader.getInstance().getProperty("max.threads")));
 	private static PigJobServer pigServer= new PigJobServerImpl();
-	private static final String JT_UI= PropertyLoader.getInstance().getProperty("jobtracker.ui");
+	private static final String JT_UI= PropertyLoader.getInstance().getProperty("resourcemanager.ui");
 	private final Logger logger= Logger.getLogger(PigJobServerImpl.class);
 	
 	/*
@@ -66,6 +66,8 @@ public class PigJobServerImpl implements PigJobServer {
 		String defaultHdfsName= PropertyLoader.getInstance().getProperty(Constants.DEFAULT_HDFS_NAME);
 		Configuration conf= new Configuration();
 		conf.set(Constants.DEFAULT_HDFS_NAME, defaultHdfsName);
+		conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+		conf.set("fs.file.impl",org.apache.hadoop.fs.LocalFileSystem.class.getName());
 		FileSystem fileSystem= null;
 		try {
 			fileSystem = FileSystem.get(conf);
@@ -307,16 +309,18 @@ public class PigJobServerImpl implements PigJobServer {
 			List<String> jobs= stats.getJobs();
 			for (String job : jobs) {
 				job= job.substring(JT_UI.length());
-				JobConf jobConf = new JobConf();
-				jobConf.set("fs.default.name", PropertyLoader.getInstance().getProperty("fs.default.name"));
-				jobConf.set("mapred.job.tracker", PropertyLoader.getInstance().getProperty("jobtracker"));
+				Configuration jobConf = new YarnConfiguration();
+				jobConf.set("mapreduce.framework.name", "yarn");
+				jobConf.set("fs.defaultFS", PropertyLoader.getInstance().getProperty("fs.defaultFS"));
+				jobConf.set("yarn.resourcemanager.address", PropertyLoader.getInstance().getProperty("resourcemanager"));
+				jobConf.set("mapreduce.jobhistory.address", PropertyLoader.getInstance().getProperty("jobhistory"));
+				YarnClient client= null;
 				try {
-				   JobClient jobClient = new JobClient(jobConf);
-				   RunningJob rJob = jobClient.getJob(JobID.forName(job));
-				   
-				   if (! rJob.isComplete()) {
-					   rJob.killJob();
-				   }
+				   client= YarnClient.createYarnClient();
+				   client.init(jobConf);
+				   client.start();
+				   ApplicationId appId= ConverterUtils.toApplicationId(job);
+				   client.killApplication(appId);
 				} catch (Exception e) {
 				   throw new Exception ("Unable to kill job " + job);
 				}

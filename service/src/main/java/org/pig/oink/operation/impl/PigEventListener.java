@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapreduce.JobID;
+import org.apache.hadoop.mapreduce.TypeConverter;
 import org.apache.log4j.Logger;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.plans.MROperPlan;
 import org.apache.pig.tools.pigstats.JobStats;
@@ -42,7 +44,7 @@ public class PigEventListener implements PigProgressNotificationListener {
 	private String requestId;
 	private Logger logger= Logger.getLogger(PigEventListener.class);
 	private Gson gson= new GsonBuilder().setPrettyPrinting().setDateFormat("yyyy/MM/dd-HH:mm").create();
-	private static final String JT_UI= PropertyLoader.getInstance().getProperty("jobtracker.ui");
+	private static final String JT_UI= PropertyLoader.getInstance().getProperty("resourcemanager.ui");
 	private PigRequestStats requestStats;
 	private String requestPath;
 	
@@ -84,7 +86,12 @@ public class PigEventListener implements PigProgressNotificationListener {
 	@Override
 	public void jobStartedNotification(String scriptId, String jobId) {
 		logger.info("Job started with ID" + jobId + " for request " + requestId);
-		requestStats.addJob(JT_UI + jobId);
+		String jobUrl= JT_UI + TypeConverter.toYarn(JobID.forName(jobId)).getAppId();
+		
+		if (! requestStats.getJobs().contains(jobUrl)) {
+			requestStats.addJob(jobUrl);
+		}
+		
 		try {
 			PigUtils.writeStatsFile(new Path(requestPath + "/stats"), requestStats);
 		} catch (Exception e) {
