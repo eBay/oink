@@ -46,6 +46,8 @@ public class PigUtils {
 			conf= new Configuration();
 			conf.set(Constants.DEFAULT_HDFS_NAME, PropertyLoader.getInstance().getProperty(Constants.DEFAULT_HDFS_NAME));
 			FileSystem fileSystem= FileSystem.get(conf);
+			conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+			conf.set("fs.file.impl",org.apache.hadoop.fs.LocalFileSystem.class.getName());
 			BufferedWriter writer= new BufferedWriter(new OutputStreamWriter(fileSystem.create(filePath, true)));
 			writer.write(encodedStats);
 			writer.close();
