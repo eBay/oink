@@ -68,7 +68,7 @@ public class PigResource {
 	@Path("/jar/{jarName}")
 	@Consumes ( {MediaType.APPLICATION_OCTET_STREAM} )
 	@Produces ({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-	public Response registerJar(@PathParam("jarName") String jarName, InputStream uploadedJar) throws IOException {
+	public Response registerJar(@PathParam("jarName") String jarName, InputStream uploadedJar) {
 		logger.info("Request for registring jar with name " + jarName);
 		try {
 			if (uploadedJar == null || uploadedJar.available() == 0){
@@ -81,9 +81,6 @@ public class PigResource {
 		} catch (IOException ie) {
 			logger.error("Error while registering jar " + jarName, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
-		} catch (Exception e) {
-			logger.error("Error while registering jar " + jarName, e);
-			throw new WebApplicationException(Response.status(500).entity(e.getMessage()).build());
 		}
 	}
 
@@ -102,9 +99,6 @@ public class PigResource {
 		} catch (IOException ie) {
 			logger.error("Error while deleting file " + jarName, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
-		} catch (Exception e) {
-			logger.error("Error while deleting file " + jarName, e);
-			throw new WebApplicationException(Response.status(500).entity(e.getMessage()).build());
 		}
 	}
 	
@@ -113,27 +107,21 @@ public class PigResource {
 	@Produces ( {MediaType.APPLICATION_OCTET_STREAM} )
 	public Response getRegisteredJar(@PathParam("jarName") String jarName) {
 		logger.info("REquest for getting jar " + jarName);
-		try {
-			String jarPath= PropertyLoader.getInstance().getProperty(Constants.JARS_PATH) + jarName;
-			StreamingBinOutputImpl streamingOutputImpl = new StreamingBinOutputImpl(jarPath);	
-			   
-			if(streamingOutputImpl.isAvailable() == false) {
-				logger.info("Requested jar " + jarName + " is not found");
-				return Response.status(HttpURLConnection.HTTP_NOT_FOUND).entity("Jar not found").build();				   
-			} else {
-				return Response.ok(streamingOutputImpl).build();
-			}
-		} catch (Exception ie){
-			logger.error("Error while getting jar "+ jarName, ie);
-			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
+		String jarPath= PropertyLoader.getInstance().getProperty(Constants.JARS_PATH) + jarName;
+		StreamingBinOutputImpl streamingOutputImpl = new StreamingBinOutputImpl(jarPath);	
+	   
+		if(streamingOutputImpl.isAvailable() == false) {
+		    logger.info("Requested jar " + jarName + " is not found");
+			return Response.status(HttpURLConnection.HTTP_NOT_FOUND).entity("Jar not found").build();				   
 		}
+		return Response.ok(streamingOutputImpl).build();
 	}
 	
 	@POST
 	@Path("/script/{scriptName}")
 	@Consumes ( {MediaType.APPLICATION_OCTET_STREAM} )
 	@Produces ({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-	public Response registerScript(@PathParam("scriptName") String scriptName, InputStream uploadedScript) throws IOException {
+	public Response registerScript(@PathParam("scriptName") String scriptName, InputStream uploadedScript) {
 		logger.info("Request for registering script " + scriptName);
 		try{
 			if (uploadedScript == null || uploadedScript.available() == 0){
@@ -160,9 +148,6 @@ public class PigResource {
 		} catch (IOException ie) {
 			logger.error("Error while registering pig script " + scriptName , ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
-		} catch (Exception e) {
-			logger.error("Error while registering pig script " + scriptName , e);
-			throw new WebApplicationException(Response.status(500).entity(e.getMessage()).build());
 		}
 	}
 	   
@@ -181,31 +166,22 @@ public class PigResource {
 		} catch (IOException ie) {
 			logger.error("Error while deleteing script " + scriptName, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
-		} catch (Exception e) {
-			logger.error("Error while deleteing script " + scriptName, e);
-			throw new WebApplicationException(Response.status(500).entity(e.getMessage()).build());
 		}
 	}
-	   
+
 	@GET
 	@Path("/script/{scriptName}")
 	@Produces ( {MediaType.APPLICATION_OCTET_STREAM} )
 	public Response getRegisteredScript(@PathParam("scriptName") String scriptName) {
 		logger.info("Request for getting script " + scriptName);
-		try {
-			String scriptPath= PropertyLoader.getInstance().getProperty(Constants.SCRIPTS_PATH) + scriptName;
-			StreamingBinOutputImpl streamingOutputImpl = new StreamingBinOutputImpl(scriptPath);	
-			
-			if(streamingOutputImpl.isAvailable() == false) {
-				logger.info("Requested script " + scriptName + " not found.");
-				return Response.status(HttpURLConnection.HTTP_NOT_FOUND).entity("Script not found").build();				   
-			} else {
-				return Response.ok(streamingOutputImpl).build();
-			}
-		} catch (Exception ie) {
-			logger.error("Error while retrieving pig script " + scriptName, ie);
-			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
+		String scriptPath= PropertyLoader.getInstance().getProperty(Constants.SCRIPTS_PATH) + scriptName;
+		StreamingBinOutputImpl streamingOutputImpl = new StreamingBinOutputImpl(scriptPath);	
+
+		if(streamingOutputImpl.isAvailable() == false) {
+			logger.info("Requested script " + scriptName + " not found.");
+			return Response.status(HttpURLConnection.HTTP_NOT_FOUND).entity("Script not found").build();				   
 		}
+		return Response.ok(streamingOutputImpl).build();
 	}
 
 	@POST
@@ -234,7 +210,7 @@ public class PigResource {
 			PigJobServerImpl.getPigJobServer().submitPigJob(scriptId, scriptName, request);
 			return Response.ok().entity(scriptId).build();
 		} catch (IOException ie) {
-			logger.error("Error while submitting script " + scriptName, ie);
+			logger.error("Error while getting request ", ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
 		}
 	}
@@ -255,9 +231,6 @@ public class PigResource {
 		}catch (IOException ie) {
 			logger.error("Error while getting request " + requestId, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
-		}catch (Exception e) {
-			logger.error("Error while getting request " + requestId, e);
-			throw new WebApplicationException(Response.status(500).entity(e.getMessage()).build());
 		}
 	}
 
@@ -277,9 +250,6 @@ public class PigResource {
 		} catch (IOException ie) {
 			logger.error("Error while getting stats for request " + requestId, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
-		} catch (Exception e) {
-			logger.error("Error while getting stats for request " + requestId, e);
-			throw new WebApplicationException(Response.status(500).entity(e.getMessage()).build());
 		}
 	}
 	   
@@ -287,19 +257,18 @@ public class PigResource {
 	@Path("/request/{requestId}/output")
 	@Produces( {MediaType.TEXT_PLAIN} )
 	public Response getOutput(@PathParam("requestId") String requestId) {
-		logger.info("Request for reading output for " + requestId);
 		try {
-			String outputPath= PropertyLoader.getInstance().getProperty(Constants.REQUEST_PATH) + requestId;
-			StreamingPigOutputImpl streamingPigOutputImpl = new StreamingPigOutputImpl(outputPath);	
-			   
-			if(streamingPigOutputImpl.isAvailable() == false) {
-				logger.info("Request " + requestId + " not available");
-				return Response.status(404).entity("Invalid Request ID").build();				   
-			} else {
-				return Response.ok(streamingPigOutputImpl).build();
-			}
+		    logger.info("Request for reading output for " + requestId);
+		    String outputPath= PropertyLoader.getInstance().getProperty(Constants.REQUEST_PATH) + requestId;
+		    StreamingPigOutputImpl streamingPigOutputImpl = new StreamingPigOutputImpl(outputPath);	
+   
+		    if(streamingPigOutputImpl.isAvailable() == false) {
+			    logger.info("Request " + requestId + " not available");
+			    return Response.status(404).entity("Invalid Request ID").build();				   
+	        }
+		    return Response.ok(streamingPigOutputImpl).build();
 		} catch (IOException ie) {
-			logger.error("Error while reading output for " + requestId, ie);
+			logger.error("Error while getting stats for request " + requestId, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
 		}
 	}
@@ -317,9 +286,6 @@ public class PigResource {
 		} catch (IOException ie) {
 			logger.error("Error while getting status for " + requestId, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
-		} catch (Exception e) {
-			logger.error("Error while getting status for " + requestId, e);
-			throw new WebApplicationException(Response.status(500).entity(e.getMessage()).build());
 		}
 	}
 	   
@@ -341,9 +307,6 @@ public class PigResource {
 		} catch (IOException ie) {
 			logger.error("Error while cancelling request " + requestId, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
-		} catch (Exception e) {
-			logger.error("Error while cancelling request " + requestId, e);
-			throw new WebApplicationException(Response.status(500).entity(e.getMessage()).build());
 		}
 	}
 }

@@ -31,8 +31,7 @@ public interface PigJobServer {
 	 * @throws IllegalArgumentException - if script is not registered or any other error in input parameter
 	 * @throws IOException - if any error occurred while executing it
 	 */
-	public void submitPigJob(String requestId, String scriptName, PigRequestParameters params) throws 
-		IllegalArgumentException, IOException;
+	public void submitPigJob(String requestId, String scriptName, PigRequestParameters params) throws IOException;
 
 	/**
 	 * This method registers(writes) a file to HDFS
@@ -58,33 +57,30 @@ public interface PigJobServer {
 	 * @throws IOException 
 	 * @throws Exception 
 	 */
-	public PigRequestParameters getInputRequest(String requestId) throws IOException, Exception;
+	public PigRequestParameters getInputRequest(String requestId) throws IOException;
 
 	/**
 	 * This method returns the request execution statistics for a given requestId
 	 * @param requestId - ID that was generated when the request was submitted
 	 * @return PigRequestStats object
 	 * @throws IOException 
-	 * @throws Exception 
 	 */
-	public PigRequestStats getRequestStats(String requestId) throws IOException, Exception;
+	public PigRequestStats getRequestStats(String requestId) throws IOException;
 
 	/**
 	 * This method returns the status of the submitted request. This can be used for polling
 	 * @param requestId - ID that was generated when the request was submitted
 	 * @return String object
-	 * @throws IOException 
-	 * @throws Exception 
+	 * @throws IOException
 	 */
-	public String getRequestStatus(String requestId) throws IOException, Exception;
+	public String getRequestStatus(String requestId) throws IOException;
 	
 	/**
 	 * This method cancels the MapReduce jobs associated with the requestId
 	 * @param requestId - ID that was generated when the request was submitted
 	 * @return boolean object
-	 * @throws IOException 
-	 * @throws Exception 
+	 * @throws IOException
 	 */
-	public boolean cancelRequest(String requestId) throws IOException, Exception;
+	public boolean cancelRequest(String requestId) throws IOException;
 }
 	
