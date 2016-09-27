@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -53,18 +54,20 @@ import org.pig.oink.operation.impl.StreamingPigOutputImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+/**
+ * Pig REST resource.
+ */
 @Path("/")
 public class PigResource {
 	private Logger logger= Logger.getLogger(PigResource.class);
-	
-	
+
 	@Context 
 	private HttpServletRequest requestInfo;
 
 	@POST
 	@Path("/jar/{jarName}")
 	@Consumes ( {MediaType.APPLICATION_OCTET_STREAM} )
-	@Produces ({MediaType.TEXT_PLAIN})
+	@Produces ({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 	public Response registerJar(@PathParam("jarName") String jarName, InputStream uploadedJar) throws IOException {
 		logger.info("Request for registring jar with name " + jarName);
 		try {
@@ -74,10 +77,7 @@ public class PigResource {
 			}
 			String pathName= PropertyLoader.getInstance().getProperty(Constants.JARS_PATH) + jarName;
 			PigJobServerImpl.getPigJobServer().registerFile(pathName, uploadedJar);
-			return Response.ok().entity(pathName).build();
-		} catch (IllegalArgumentException iae) {
-			logger.error("Error while registering jar " + jarName, iae);
-			throw new WebApplicationException(Response.status(409).entity(iae.getMessage()).build());
+			return Response.ok().entity(pathName).type(MediaType.TEXT_PLAIN).build();
 		} catch (IOException ie) {
 			logger.error("Error while registering jar " + jarName, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
@@ -86,7 +86,7 @@ public class PigResource {
 			throw new WebApplicationException(Response.status(500).entity(e.getMessage()).build());
 		}
 	}
-	   
+
 	@DELETE
 	@Path("/jar/{jarName}")
 	@Produces ( {MediaType.TEXT_PLAIN} )
@@ -119,7 +119,7 @@ public class PigResource {
 			   
 			if(streamingOutputImpl.isAvailable() == false) {
 				logger.info("Requested jar " + jarName + " is not found");
-				return Response.status(404).entity("Jar not found").build();				   
+				return Response.status(HttpURLConnection.HTTP_NOT_FOUND).entity("Jar not found").build();				   
 			} else {
 				return Response.ok(streamingOutputImpl).build();
 			}
@@ -132,7 +132,7 @@ public class PigResource {
 	@POST
 	@Path("/script/{scriptName}")
 	@Consumes ( {MediaType.APPLICATION_OCTET_STREAM} )
-	@Produces ({MediaType.TEXT_PLAIN})
+	@Produces ({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 	public Response registerScript(@PathParam("scriptName") String scriptName, InputStream uploadedScript) throws IOException {
 		logger.info("Request for registering script " + scriptName);
 		try{
@@ -157,9 +157,6 @@ public class PigResource {
 			}
 			logger.info("Script " + scriptName + " is not valid");
 			return Response.status(400).entity("Bad Request. Either DUMP command is used or STORE is used without '$output'").build();
-		} catch (IllegalArgumentException iae) {
-			logger.error("Error while registering pig script " + scriptName , iae);
-			throw new WebApplicationException(Response.status(409).entity(iae.getMessage()).build());
 		} catch (IOException ie) {
 			logger.error("Error while registering pig script " + scriptName , ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
@@ -201,7 +198,7 @@ public class PigResource {
 			
 			if(streamingOutputImpl.isAvailable() == false) {
 				logger.info("Requested script " + scriptName + " not found.");
-				return Response.status(404).entity("Script not found").build();				   
+				return Response.status(HttpURLConnection.HTTP_NOT_FOUND).entity("Script not found").build();				   
 			} else {
 				return Response.ok(streamingOutputImpl).build();
 			}
@@ -236,9 +233,6 @@ public class PigResource {
 			logger.info("New request id generated " + scriptId + " for pig script " + scriptName);
 			PigJobServerImpl.getPigJobServer().submitPigJob(scriptId, scriptName, request);
 			return Response.ok().entity(scriptId).build();
-		} catch(IllegalArgumentException e) {
-			logger.error("Error while submitting request " , e);
-			throw new WebApplicationException(Response.status(400).entity(e.getMessage()).build());
 		} catch (IOException ie) {
 			logger.error("Error while submitting script " + scriptName, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
@@ -258,9 +252,6 @@ public class PigResource {
 		} catch (FileNotFoundException fnfe) {
 			logger.error("Error while getting request " + requestId, fnfe);
 			throw new WebApplicationException(Response.status(404).entity(fnfe.getMessage()).build());
-		}catch (IllegalArgumentException ie) {
-			logger.error("Error while getting request " + requestId, ie);
-			throw new WebApplicationException(Response.status(404).entity(ie.getMessage()).build());
 		}catch (IOException ie) {
 			logger.error("Error while getting request " + requestId, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
@@ -283,9 +274,6 @@ public class PigResource {
 		} catch (FileNotFoundException fnfe) {
 			logger.error("Error while getting stats for request " + requestId, fnfe);
 			throw new WebApplicationException(Response.status(404).entity(fnfe.getMessage()).build());
-		} catch (IllegalArgumentException ie) {
-			logger.error("Error while getting stats for request " + requestId, ie);
-			throw new WebApplicationException(Response.status(404).entity(ie.getMessage()).build());
 		} catch (IOException ie) {
 			logger.error("Error while getting stats for request " + requestId, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
@@ -326,9 +314,6 @@ public class PigResource {
 		try {
 			status = PigJobServerImpl.getPigJobServer().getRequestStatus(requestId);
 			return Response.ok().entity(status).build();
-		} catch (IllegalArgumentException iae) {
-			logger.error("Error while getting status for " + requestId, iae);
-			throw new WebApplicationException(Response.status(404).entity(iae.getMessage()).build());
 		} catch (IOException ie) {
 			logger.error("Error while getting status for " + requestId, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());
@@ -353,9 +338,6 @@ public class PigResource {
 				return Response.status(500).entity("Request doesnt have any running jobs").build();
 			}
 				
-		} catch (IllegalArgumentException iae) {
-			logger.error("Error while cancelling request " + requestId, iae);
-			throw new WebApplicationException(Response.status(404).entity(iae.getMessage()).build());
 		} catch (IOException ie) {
 			logger.error("Error while cancelling request " + requestId, ie);
 			throw new WebApplicationException(Response.status(500).entity(ie.getMessage()).build());

@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -44,7 +43,6 @@ import org.pig.oink.commons.Constants;
 import org.pig.oink.commons.PigUtils;
 import org.pig.oink.commons.Status;
 import org.pig.oink.operation.PigJobServer;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -115,11 +113,11 @@ public class PigJobServerImpl implements PigJobServer {
 	 */
 	@Override
 	public void registerFile(String filePath, InputStream fileInputStream) throws FileNotFoundException, IOException {
-		FileSystem fs = getFileSystem();
-		Path pathName= new Path(filePath);
+        FileSystem fs = getFileSystem();
+        Path pathName= new Path(filePath);
 		if(fs.exists(pathName)) {
-			   throw new IllegalArgumentException("File already exists");
-		}
+            throw new IllegalStateException("File already exists");
+        }
 		
 		FSDataOutputStream out= null;
 		try {
@@ -144,7 +142,7 @@ public class PigJobServerImpl implements PigJobServer {
 				try {
 					out.close();
 				} catch(Exception e) {
-				logger.error("Error while closing file ", e);
+			        logger.error("Error while closing file ", e);
 				}
 			}
 		}
