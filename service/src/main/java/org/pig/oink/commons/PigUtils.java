@@ -36,7 +36,7 @@ public class PigUtils {
 	private static final Logger logger= Logger.getLogger(PigUtils.class);
 
 	
-	public static void writeStatsFile (Path filePath, PigRequestStats stats) throws Exception {
+	public static void writeStatsFile (Path filePath, PigRequestStats stats) throws IOException {
 		Gson gson= new GsonBuilder().setPrettyPrinting().setDateFormat("yyyy/MM/dd-HH:mm").create();
 
 		String encodedStats= new String(Base64.encodeBase64URLSafeString(gson.toJson(stats, PigRequestStats.class).getBytes()));

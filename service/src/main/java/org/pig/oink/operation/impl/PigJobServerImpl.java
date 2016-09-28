@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -44,7 +43,6 @@ import org.pig.oink.commons.Constants;
 import org.pig.oink.commons.PigUtils;
 import org.pig.oink.commons.Status;
 import org.pig.oink.operation.PigJobServer;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -115,11 +113,11 @@ public class PigJobServerImpl implements PigJobServer {
 	 */
 	@Override
 	public void registerFile(String filePath, InputStream fileInputStream) throws FileNotFoundException, IOException {
-		FileSystem fs = getFileSystem();
-		Path pathName= new Path(filePath);
+        FileSystem fs = getFileSystem();
+        Path pathName= new Path(filePath);
 		if(fs.exists(pathName)) {
-			   throw new IllegalArgumentException("File already exists");
-		}
+            throw new IllegalStateException("File already exists");
+        }
 		
 		FSDataOutputStream out= null;
 		try {
@@ -144,7 +142,7 @@ public class PigJobServerImpl implements PigJobServer {
 				try {
 					out.close();
 				} catch(Exception e) {
-				logger.error("Error while closing file ", e);
+			        logger.error("Error while closing file ", e);
 				}
 			}
 		}
@@ -179,11 +177,10 @@ public class PigJobServerImpl implements PigJobServer {
 	 * Return the object
 	 */
 	@Override
-	public PigRequestParameters getInputRequest(String scriptId) throws IllegalArgumentException, IOException, Exception {
+	public PigRequestParameters getInputRequest(String scriptId) throws IOException {
 		FileSystem fileSystem= getFileSystem();
 		String requestPath= PropertyLoader.getInstance().getProperty(Constants.REQUEST_PATH) + scriptId;
-		 
-		
+
 		if(!fileSystem.exists(new Path(requestPath))) {
 			throw new IllegalArgumentException("Request id not found");
 		}
@@ -206,7 +203,7 @@ public class PigJobServerImpl implements PigJobServer {
 			}
 		} catch(Exception e) {
 			logger.error("Error while reading file " + filePath.getName(), e);
-			throw new Exception("Unable to retrieve input details. Please try again later");
+			throw new IOException("Unable to retrieve input details. Please try again later", e);
 		} finally {
 			if(reader != null) {
 				try {
@@ -230,11 +227,12 @@ public class PigJobServerImpl implements PigJobServer {
 	 * Return the object
 	 */
 	@Override
-	public PigRequestStats getRequestStats(String scriptId) throws Exception {
+	public PigRequestStats getRequestStats(String scriptId) throws IOException {
 		FileSystem fileSystem= getFileSystem();
 		String requestPath= PropertyLoader.getInstance().getProperty(Constants.REQUEST_PATH) + scriptId;
 		if(! fileSystem.exists(new Path(requestPath))) {
-			throw new IllegalArgumentException("Request id not found");
+			logger.error("Invalid request ID");
+			throw new IllegalArgumentException("Invalid request ID");
 		}
 		
 		Path filePath= new Path(requestPath + "/stats");
@@ -255,7 +253,7 @@ public class PigJobServerImpl implements PigJobServer {
 			}
 		} catch(Exception e) {
 			logger.error("Error while reading file " + filePath.getName(), e);
-			throw new Exception("Unable to retrieve input details. Please try again later");
+			throw new IOException("Unable to retrieve input details. Please try again later", e);
 		} finally {
 			if(reader != null) {
 				try {
@@ -270,7 +268,7 @@ public class PigJobServerImpl implements PigJobServer {
 	}
 
 	@Override
-	public String getRequestStatus(String scriptId) throws Exception {
+	public String getRequestStatus(String scriptId) throws IOException {
 		FileSystem fileSystem= getFileSystem();
 		String requestPath= PropertyLoader.getInstance().getProperty(Constants.REQUEST_PATH) + scriptId;
 		if(!fileSystem.exists(new Path(requestPath))) {
@@ -290,18 +288,8 @@ public class PigJobServerImpl implements PigJobServer {
 	}
 
 	@Override
-	public boolean cancelRequest(String requestId) throws IOException,
-			Exception {
-		PigRequestStats stats= null;
-		try {
-			stats= getRequestStats(requestId);
-		} catch (IllegalArgumentException e) {
-			logger.error("Invalid request ID", e);
-			throw new IllegalArgumentException("Invalid request ID");
-		} catch (Exception e) {
-			logger.error("Unable to get list of jobs", e);
-			throw new IOException("Unable to get list of jobs"); 
-		}
+	public boolean cancelRequest(String requestId) throws IOException {
+		PigRequestStats stats = this.getRequestStats(requestId);
 		
 		if (stats.getStatus().equals(Status.SUBMITTED.toString())) {
 			List<String> jobs= stats.getJobs();
@@ -318,7 +306,7 @@ public class PigJobServerImpl implements PigJobServer {
 					   rJob.killJob();
 				   }
 				} catch (Exception e) {
-				   throw new Exception ("Unable to kill job " + job);
+				   throw new IOException ("Unable to kill job " + job);
 				}
 			}
 			PigRequestStats requestStats= new PigRequestStats(0, 0, null, jobs.size());
